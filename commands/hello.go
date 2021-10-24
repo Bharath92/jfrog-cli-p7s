@@ -2,23 +2,40 @@ package commands
 
 import (
 	"errors"
-	"github.com/jfrog/jfrog-cli-core/v2/plugins/components"
-	"github.com/jfrog/jfrog-client-go/utils/log"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/go-git/go-git/v5"
+	"github.com/jfrog/jfrog-cli-core/v2/plugins/components"
+	"github.com/jfrog/jfrog-client-go/utils/log"
 )
 
 func GetHelloCommand() components.Command {
 	return components.Command{
-		Name:        "hello",
-		Description: "Says Hello.",
-		Aliases:     []string{"hi"},
+		Name:        "pipelines",
+		Description: "Pipelines GUI.",
+		Aliases:     []string{"p7s"},
 		Arguments:   getHelloArguments(),
 		Flags:       getHelloFlags(),
 		EnvVars:     getHelloEnvVar(),
 		Action: func(c *components.Context) error {
-			return helloCmd(c)
+			dir, err := os.Getwd()
+			if err != nil {
+				log.Error(err)
+			}
+			log.Error(dir)
+			r, err := git.PlainOpen(dir)
+			if err != nil {
+				log.Error(err)
+			}
+			log.Error(r.Head())
+			remote, err := r.Remotes()
+			if err != nil {
+				log.Error(err)
+			}
+			log.Error(remote[0].Config().URLs[0])
+			return nil
 		},
 	}
 }
